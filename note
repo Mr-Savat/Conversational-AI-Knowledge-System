@@ -1,0 +1,47 @@
+
+## Project Architecture
+
+```
+src/
+├── App.tsx                    # Router configuration
+├── main.tsx                   # Entry point
+├── index.css                  # Global styles + Tailwind + custom components
+├── types/index.ts             # TypeScript type definitions
+├── store/
+│   ├── chatStore.ts           # Chat state (conversations, messages, AI responses)
+│   └── adminStore.ts          # Admin state (auth, knowledge sources, stats)
+├── layouts/
+│   ├── ChatLayout.tsx          # Layout for AI Chat section
+│   └── AdminLayout.tsx         # Layout for Admin panel (with auth guard)
+├── components/
+│   ├── chat/
+│   │   ├── ChatSidebar.tsx     # Conversation list sidebar
+│   │   ├── ChatMessage.tsx     # Message bubble with markdown rendering
+│   │   ├── ChatInput.tsx       # Input with auto-resize and keyboard shortcuts
+│   │   └── WelcomeScreen.tsx   # Welcome screen with suggestions
+│   ├── admin/
+│   │   ├── AdminSidebar.tsx    # Admin navigation sidebar
+│   │   ├── StatsCard.tsx       # Dashboard stat card component
+│   │   └── KnowledgeTable.tsx  # Knowledge sources table with actions
+│   └── ui/                     # Shared UI components (to be extended)
+└── pages/
+    ├── HomePage.tsx            # Landing page with features & use cases
+    ├── ChatPage.tsx            # AI Chat interface
+    ├── AdminLoginPage.tsx      # Admin login (demo mode)
+    ├── AdminDashboardPage.tsx  # Dashboard with stats & activity
+    ├── AdminKnowledgePage.tsx  # Knowledge source management with upload modal
+    ├── AdminSourcesPage.tsx    # External URL data sources
+    └── AdminSettingsPage.tsx   # System settings
+```
+
+## Routes
+
+| Path | Page | Auth Required |
+|------|------|---------------|
+| `/` | Landing/Home Page | No |
+| `/chat` | AI Chat Interface | No |
+| `/admin/login` | Admin Login | No |
+| `/admin` | Admin Dashboard | Yes |
+| `/admin/knowledge` | Knowledge Management | Yes |
+| `/admin/sources` | Data Sources | Yes |
+| `/admin/settings` | Settings | Yes |
