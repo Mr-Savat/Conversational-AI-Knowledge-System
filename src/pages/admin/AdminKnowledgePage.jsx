@@ -82,7 +82,7 @@ export default function AdminKnowledgePage() {
 
       {/* Upload Modal - Styled like the cards in your images */}
       {showUploadModal && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-gray-900/40 backdrop-blur-md animate-in fade-in duration-300">
+        <div className="fixed inset-0 z-100 flex items-center justify-center p-6 bg-gray-900/40 backdrop-blur-md animate-in fade-in duration-300">
           <div className="bg-white rounded-[3rem] w-full max-w-2xl p-10 shadow-2xl scale-in-center overflow-hidden relative">
             {/* Background Decoration */}
             <div className="absolute top-0 right-0 w-40 h-40 bg-[#faf5ff] rounded-full -translate-y-1/2 translate-x-1/2" />

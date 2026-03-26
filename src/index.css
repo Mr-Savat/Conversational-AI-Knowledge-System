@@ -1,10 +1,7 @@
 @import "tailwindcss";
-
-/* ✅ Dark mode */
 @custom-variant dark (&:is(.dark *));
 
-/* ✅ Your custom brand colors */
-@theme {
+/* @theme {
   --color-brand-50: #f8fafc;
   --color-brand-100: #f1f5f9;
   --color-brand-200: #e2e8f0;
@@ -16,29 +13,9 @@
   --color-brand-800: #1d293d;
   --color-brand-900: #0f172b;
   --color-brand-950: #020618;
+} */
 
-/* AMETHYST ADMIN PALETTE */
---color-admin-950: #3c0366; /* Deepest Purple (Sidebar/Headers) */
---color-admin-900: #59168b; /* Dark Purple (Sidebar Active) */
---color-admin-800: #ad46ff; /* Vibrant AI Purple (Primary Buttons/Actions) */
---color-admin-400: #dab2ff; /* Soft Purple (Borders/Icons) */
---color-admin-100: #f3e8ff; /* Tint (Hover states/Backgrounds) */
---color-admin-50: #faf5ff;  /* Lightest (Page Background) */
-}
-
-@layer components {
-
-  /* Update Admin specific buttons to use the new palette */
-  .btn-admin-primary {
-    @apply px-4 py-2 bg-admin-800 hover:bg-admin-900 text-white rounded-xl font-semibold transition-all shadow-md shadow-admin-900/20;
-  }
-
-  .sidebar-link-admin-active {
-    @apply bg-admin-900 text-white shadow-lg shadow-admin-900/20;
-  }
-}
-
-/* ✅ Base styles */
+/* 
 @layer base {
   html {
     scroll-behavior: smooth;
@@ -48,7 +25,6 @@
     @apply bg-brand-50 text-brand-900 dark:bg-brand-950 dark:text-brand-50;
   }
 
-  /* Single, clean transition rule — no duplicate */
   .theme-ready *,
   .theme-ready ::before,
   .theme-ready ::after {
@@ -82,4 +58,4 @@
   .sidebar-link-inactive {
     @apply text-brand-500 hover:bg-brand-50 dark:hover:bg-brand-900 hover:text-brand-700 dark:hover:text-brand-300;
   }
-}
+} */
