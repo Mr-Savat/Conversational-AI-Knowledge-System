@@ -1,64 +1,82 @@
 import React from 'react';
-import { GraduationCap, Moon, Sun, LayoutDashboard, Brain } from 'lucide-react';
+import { Moon, Sun, LayoutDashboard, Brain } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 import { useNavigate } from 'react-router-dom';
 
-const Navbar = () => {
+const Navbar = ({ title = 'AI Knowledge' }) => {
   const { isDark, setIsDark } = useTheme();
   const navigate = useNavigate();
 
   return (
-    <nav className="flex justify-between items-center px-8 py-4 border-b border-brand-200 dark:border-brand-800 backdrop-blur-md sticky top-0 z-50 bg-brand-50/80 dark:bg-brand-950/80 transition-colors">
-      
-      {/* Brand Section */}
-      <div className="flex items-center gap-3">
-        <div className="bg-brand-900 dark:bg-brand-100 p-2 rounded-xl text-white dark:text-brand-900 shadow-lg">
-           <Brain size={22} />
+    <nav className="
+      sticky top-0 z-50 flex justify-between items-center
+      px-6 h-13
+      bg-white/70 dark:bg-[#161617]/80
+      backdrop-blur-xl backdrop-saturate-180
+      border-b border-black/8 dark:border-white/8
+      transition-colors duration-300
+    ">
+      {/* Brand */}
+      <div className="flex items-center gap-2 cursor-pointer">
+        <div className="w-6.5 h-6.5 rounded-[7px] bg-[#0071e3] flex items-center justify-center shrink-0">
+          <Brain size={13} className="text-white" strokeWidth={1.8} />
         </div>
-        <div className="hidden sm:block">
-          <h1 className="font-bold text-lg leading-tight tracking-tight text-brand-900 dark:text-brand-50">
-            Rag System
-          </h1>
-          <p className="text-[10px] uppercase tracking-widest text-brand-500 font-bold">
-            Conversational AI
-          </p>
-        </div>
+        <span className="text-[17px] font-semibold tracking-[-0.022em] text-[#1d1d1f] dark:text-[#f5f5f7]">
+          {title}
+        </span>
       </div>
 
-      {/* Actions Section */}
-      <div className="flex items-center gap-3">
-        
-        {/* Admin Access - Styled with the new Admin Maroon #670D2F */}
+      {/* Actions */}
+      <div className="flex items-center gap-1.5">
+        {/* Console */}
         <button
           onClick={() => navigate('/admin')}
-          className="flex items-center gap-2 px-3 py-2 rounded-xl text-brand-600 dark:text-brand-400 hover:bg-admin-900/10 dark:hover:bg-admin-400/10 hover:text-admin-800 transition-all border border-transparent hover:border-admin-800/20"
-          title="Admin Panel"
+          className="
+            flex items-center gap-1.5 px-3 py-1.5
+            rounded-full text-[#1d1d1f] dark:text-white/86
+            hover:bg-black/6 dark:hover:bg-white/10
+            transition-all active:scale-[0.97]
+          "
         >
-          <LayoutDashboard size={20} />
-          <span className="text-xs font-bold hidden md:block uppercase tracking-tighter">Console</span>
+          <LayoutDashboard size={15} strokeWidth={1.6} />
+          <span className="hidden md:block text-xs font-medium text-[#6e6e73] dark:text-white/50 tracking-[0.01em]">
+            Console
+          </span>
         </button>
 
-        <div className="h-6 w-px bg-brand-200 dark:bg-brand-800 mx-1" />
+        {/* Divider */}
+        <div className="w-px h-4.5 bg-black/15 dark:bg-white/15 mx-0.5" />
 
-        {/* Theme Toggle */}
+        {/* Theme toggle */}
         <button
-          onClick={() => setIsDark(prev => !prev)}
-          className="p-2.5 rounded-xl bg-brand-100 dark:bg-brand-900 hover:scale-105 active:scale-95 transition-all border border-brand-200 dark:border-brand-800"
+          onClick={() => setIsDark(p => !p)}
+          className="
+            w-8.5 h-8.5 rounded-full flex items-center justify-center
+            hover:bg-black/6 dark:hover:bg-white/10
+            transition-all active:scale-[0.93]
+            text-[#1d1d1f] dark:text-white/86
+          "
         >
-          {isDark ? (
-            <Sun size={20} className="text-yellow-400" />
-          ) : (
-            <Moon size={20} className="text-brand-600" />
-          )}
+          {isDark
+            ? <Sun size={16} strokeWidth={1.5} />
+            : <Moon size={16} strokeWidth={1.5} />
+          }
         </button>
 
-        {/* Auth Action */}
-        <button className="px-5 py-2.5 text-sm font-bold bg-brand-900 dark:bg-brand-100 text-white dark:text-brand-950 rounded-xl hover:opacity-90 active:scale-95 transition-all shadow-xl shadow-brand-900/10 dark:shadow-none">
+        {/* Sign In */}
+        <button className="
+          px-4 py-1.75 rounded-full
+          bg-[#0071e3] dark:bg-white
+          text-white dark:text-[#1d1d1f]
+          text-[13px] font-normal tracking-[-0.01em]
+          hover:opacity-90 active:scale-[0.97]
+          transition-all duration-150
+          whitespace-nowrap
+        ">
           Sign In
         </button>
       </div>
     </nav>
   );
 };
-
 export default Navbar;

@@ -1,46 +1,101 @@
-import React, { useEffect, useRef } from 'react';
-import { useAIChat } from '../hooks/useAIChat';
+import React, { useEffect, useRef, useMemo } from 'react';
+import useAIChat from '../hooks/useAIChat';
+import ChatSidebar from '../components/chat/ChatSidebar';
 import ChatMessage from '../components/chat/ChatMessage';
 import ChatInput from '../components/chat/ChatInput';
 import WelcomeScreen from '../components/chat/WelcomeScreen';
+import Navbar from '../layouts/Navbar';
 
 const ChatPage = () => {
-  const { messages, input, setInput, loading, handleSend } = useAIChat();
+  const { 
+    messages, 
+    input, 
+    setInput, 
+    loading, 
+    conversationId,
+    conversationTitle,
+    startNewChat,
+    loadConversation,
+    handleSend, 
+    handleSuggestion 
+  } = useAIChat();
+  
   const messagesEndRef = useRef(null);
 
+  // Determine navbar title
+  const getNavbarTitle = () => {
+    if (conversationTitle) {
+      return conversationTitle;
+    }
+    if (messages.length > 0) {
+      return 'New Conversation';
+    }
+    return 'AI Knowledge';
+  };
+
+  // Memoize message list to prevent unnecessary re-renders
+  const renderedMessages = useMemo(() => (
+    messages.map((msg, idx) => {
+      const isLastMessage = idx === messages.length - 1;
+      const isAILoading = loading && isLastMessage && msg.role === 'user';
+      
+      return (
+        <ChatMessage 
+          key={msg.id || idx}
+          role={msg.role} 
+          text={msg.text}
+          time={msg.created_at}
+          isLoading={isAILoading}
+        />
+      );
+    })
+  ), [messages, loading]);
+
+  // Smooth scroll to bottom when messages update
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+    const timeoutId = setTimeout(() => {
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }, 100);
+    return () => clearTimeout(timeoutId);
+  }, [messages, loading]);
 
   return (
-    // 'h-[calc(100vh-73px)]' matches your navbar height
-    <div className="flex flex-col h-[calc(100vh-73px)] bg-brand-50 dark:bg-brand-950">
+    <div className="flex h-screen overflow-hidden bg-[#fafafc] dark:bg-black text-[#1d1d1f] dark:text-[#f5f5f7]">
+      <ChatSidebar 
+        onSelectConversation={loadConversation}
+        currentConversationId={conversationId}
+        onNewChat={startNewChat}
+      />
       
-      {/* 1. Scrollable Area - Use flex-1 to take up all remaining space */}
-      <div className="flex-1 overflow-y-auto px-6 py-8">
-        <div className="max-w-3xl mx-auto">
-          {messages.length === 0 ? (
-            <WelcomeScreen onSelectSuggestion={(val) => setInput(val)} />
-          ) : (
-            <>
-              {messages.map((msg, idx) => <ChatMessage key={idx} {...msg} />)}
-              <div ref={messagesEndRef} />
-            </>
-          )}
+      <main className="flex-1 flex flex-col min-w-0 relative">
+        <Navbar title={getNavbarTitle()} />
+        
+        {/* Message Thread */}
+        <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-black/10 dark:scrollbar-thumb-white/10">
+          <div className="max-w-3xl mx-auto w-full px-4 py-6">
+            {messages.length === 0 ? (
+              <WelcomeScreen onSelectSuggestion={handleSuggestion} />
+            ) : (
+              <div className="space-y-5">
+                {renderedMessages}
+                <div ref={messagesEndRef} className="h-2" />
+              </div>
+            )}
+          </div>
         </div>
-      </div>
 
-      {/* 2. Input Area - No longer absolute/fixed, sits naturally at the bottom */}
-      <div className="p-4 pb-8">
-        <div className="max-w-3xl mx-auto">
-          <ChatInput
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onSend={handleSend}
-            loading={loading}
-          />
+        {/* Input Dock */}
+        <div className="p-4 pb-6">
+          <div className="max-w-3xl mx-auto">
+            <ChatInput
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onSend={handleSend}
+              loading={loading}
+            />
+          </div>
         </div>
-      </div>
+      </main>
     </div>
   );
 };

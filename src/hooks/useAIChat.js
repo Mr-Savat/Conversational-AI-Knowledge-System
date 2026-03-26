@@ -1,52 +1,98 @@
-import { useState, useEffect } from 'react';
-import { askKnowledgeAI } from '../services/AiService';
-import { typeTextEffect } from '../utils/typeEffect'; 
+import { useState, useCallback, } from 'react';
+import api from '../services/api';
 
-export const useAIChat = () => {
-  // Initialize from sessionStorage or empty array
-  const [messages, setMessages] = useState(() => {
-    const saved = sessionStorage.getItem('ai_chat_messages');
-    return saved ? JSON.parse(saved) : [];
-  });
-  
+const useAIChat = () => {
+  const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
+  const [conversationId, setConversationId] = useState(null);
+  const [conversationTitle, setConversationTitle] = useState('');
 
-  useEffect(() => {
-    sessionStorage.setItem('ai_chat_messages', JSON.stringify(messages));
-  }, [messages]);
+  const loadConversation = useCallback(async (id) => {
+    try {
+      setLoading(true);
+      const data = await api.getConversation(id);
+      setConversationId(data.conversation.id);
+      setConversationTitle(data.conversation.title);
+      
+      // Format messages for display
+      const formattedMessages = data.messages.map(msg => ({
+        role: msg.role === 'user' ? 'user' : 'ai',
+        text: msg.content,
+      }));
+      setMessages(formattedMessages);
+    } catch (error) {
+      console.error('Failed to load conversation:', error);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
-// Inside useAIChat.js
-const handleSend = async () => {
-  if (!input.trim() || loading) return;
+  const startNewChat = useCallback(() => {
+    setMessages([]);
+    setConversationId(null);
+    setConversationTitle('');
+    setInput('');
+  }, []);
 
-  const userText = input;
-  setInput("");
-  setLoading(true);
+  const handleSend = useCallback(async () => {
+    if (!input.trim() || loading) return;
 
-  // Add User Message
-  setMessages(prev => [...prev, { role: "user", text: userText }]);
+    const userMessage = input.trim();
+    setInput('');
+    
+    // Add user message to UI
+    setMessages(prev => [...prev, { role: 'user', text: userMessage }]);
+    setLoading(true);
 
-  try {
-    const aiResponse = await askKnowledgeAI(userText);
-
-    // Add the EMPTY AI message first so the typing effect has a target
-    setMessages(prev => [...prev, { role: "ai", text: "" }]);
-
-    // Pass a callback that only updates the TEXT, not the whole array
-    typeTextEffect(aiResponse, (newText) => {
-      setMessages(prev => {
-        const updated = [...prev];
-        updated[updated.length - 1] = { ...updated[updated.length - 1], text: newText };
-        return updated;
+    try {
+      // Send to backend
+      const response = await api.sendChatMessage({
+        message: userMessage,
+        conversation_id: conversationId,
       });
-    }, () => setLoading(false));
 
-  } catch (err) {
-    setMessages(prev => [...prev, { role: "ai", text: "Connection error." }]);
-    setLoading(false);
-  }
+      // Update conversation ID (for follow-up questions)
+      if (!conversationId) {
+        setConversationId(response.conversation_id);
+      }
+      
+      // Add AI response to UI
+      setMessages(prev => [...prev, { 
+        role: 'ai', 
+        text: response.content 
+      }]);
+      
+    } catch (error) {
+      console.error('Chat error:', error);
+      setMessages(prev => [...prev, { 
+        role: 'ai', 
+        text: `Sorry, I encountered an error: ${error.message}. Please try again.` 
+      }]);
+    } finally {
+      setLoading(false);
+    }
+  }, [input, loading, conversationId]);
+
+  const handleSuggestion = useCallback((suggestion) => {
+    setInput(suggestion);
+    setTimeout(() => {
+      handleSend();
+    }, 100);
+  }, [handleSend]);
+
+  return {
+    messages,
+    input,
+    setInput,
+    loading,
+    conversationId,
+    conversationTitle,
+    startNewChat,
+    loadConversation,
+    handleSend,
+    handleSuggestion,
+  };
 };
 
-  return { messages, input, setInput, loading, handleSend, setMessages };
-};
+export default useAIChat;

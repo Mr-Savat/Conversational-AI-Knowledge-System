@@ -1,10 +1,9 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import Navbar from './layouts/Navbar';
 import AdminLayout from './layouts/AdminLayout';
 import ChatPage from './pages/ChatPage';
 import AdminKnowledgePage from './pages/admin/AdminKnowledgePage';
-import AdminSourcesPage from './pages/admin/AdminSourcesPage'; // 1. Import the page
+import AdminSourcesPage from './pages/admin/AdminSourcesPage';
 import AdminLoginPage from './pages/admin/AdminLoginPage';
 import NotFoundPage from './pages/notfondpage/NotFoundPage';
 
@@ -17,7 +16,6 @@ const App = () => {
           {/* USER PORTAL */}
           <Route path="/" element={
             <>
-              <Navbar />
               <ChatPage />
             </>
           } />

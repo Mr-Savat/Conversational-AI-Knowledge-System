@@ -2,8 +2,7 @@ import React from 'react';
 import { Send, Loader2 } from 'lucide-react';
 
 const ChatInput = ({ value, onChange, onSend, loading }) => {
-  
-  const handleKeyDown = (e) => {
+  const handleKeyPress = (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       onSend();
@@ -11,44 +10,26 @@ const ChatInput = ({ value, onChange, onSend, loading }) => {
   };
 
   return (
-    /* FIX: Removed 'fixed', 'bottom-0', etc. 
-       The parent (ChatPage) now handles the layout positioning.
-    */
-    <div className="w-full pt-2 pb-2">
-      <div className="max-w-3xl mx-auto relative group">
-        
-        {/* Glow effect on focus */}
-        <div className="absolute -inset-0.5 bg-linear-to-r from-brand-500 to-brand-700 rounded-3xl blur opacity-20 group-focus-within:opacity-40 transition duration-500"></div>
-        
-        <div className="relative flex items-end gap-2 bg-white dark:bg-brand-900 border-2 border-brand-200 dark:border-brand-800 rounded-3xl p-2 shadow-xl transition-all focus-within:border-brand-500 dark:focus-within:border-brand-400">
-          
-          <textarea
-            rows="1"
-            value={value}
-            onChange={onChange}
-            onKeyDown={handleKeyDown}
-            placeholder="Ask anything about campus..."
-            className="w-full py-3 px-4 bg-transparent outline-none text-brand-900 dark:text-brand-50 placeholder:text-brand-400 resize-none max-h-40"
-            style={{ height: 'auto' }}
-          />
-
-          <button
-            onClick={onSend}
-            disabled={loading || !value.trim()}
-            className={`p-3 rounded-2xl transition-all flex items-center justify-center shrink-0
-              ${loading || !value.trim() 
-                ? 'bg-brand-100 dark:bg-brand-800 text-brand-400 cursor-not-allowed' 
-                : 'bg-brand-900 dark:bg-brand-100 text-white dark:text-brand-950 hover:scale-105 active:scale-95'
-              }`}
-          >
-            {loading ? (
-              <Loader2 size={22} className="animate-spin" />
-            ) : (
-              <Send size={22} />
-            )}
-          </button>
-        </div>
-      </div>
+    <div className="relative group">
+      <textarea
+        value={value}
+        onChange={onChange}
+        onKeyPress={handleKeyPress}
+        placeholder="Ask me anything..."
+        rows={1}
+        className="w-full py-3.5 pl-5 pr-14 rounded-2xl bg-white/95 dark:bg-[#1c1c1e]/95 backdrop-blur-sm border border-black/10 dark:border-white/10 text-[#1d1d1f] dark:text-[#f5f5f7] placeholder:text-[#8e8e93] resize-none focus:outline-none focus:border-[#0071e3] dark:focus:border-[#0a84ff] focus:ring-1 focus:ring-[#0071e3]/20 dark:focus:ring-[#0a84ff]/20 transition-all text-[15px] leading-relaxed shadow-sm"
+      />
+      <button
+        onClick={onSend}
+        disabled={!value.trim() || loading}
+        className="absolute right-2 bottom-2 w-9 h-9 rounded-xl bg-[#0071e3] hover:bg-[#0077ed] disabled:opacity-40 disabled:cursor-not-allowed transition-all active:scale-95 flex items-center justify-center shadow-sm"
+      >
+        {loading ? (
+          <Loader2 size={16} className="animate-spin text-white" strokeWidth={1.8} />
+        ) : (
+          <Send size={16} className="text-white" strokeWidth={1.8} />
+        )}
+      </button>
     </div>
   );
 };

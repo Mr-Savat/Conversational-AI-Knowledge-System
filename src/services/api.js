@@ -113,6 +113,27 @@ class ApiService {
       method: 'DELETE',
     });
   }
+
+  async sendChatMessage(data) {
+    return this.request('/api/chat', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async getConversations() {
+    return this.request('/api/conversations');
+  }
+
+  async getConversation(id) {
+    return this.request(`/api/conversations/${id}`);
+  }
+
+  async deleteConversation(id) {
+    return this.request(`/api/conversations/${id}`, {
+      method: 'DELETE',
+    });
+  }
 }
 
 export default new ApiService();
