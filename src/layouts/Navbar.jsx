@@ -17,10 +17,7 @@ const Navbar = ({ title = 'AI Knowledge' }) => {
       transition-colors duration-300
     ">
       {/* Brand */}
-      <div className="flex items-center gap-2 cursor-pointer">
-        <div className="w-6.5 h-6.5 rounded-[7px] bg-[#0071e3] flex items-center justify-center shrink-0">
-          <Brain size={13} className="text-white" strokeWidth={1.8} />
-        </div>
+      <div className="flex items-center gap-2">
         <span className="text-[17px] font-semibold tracking-[-0.022em] text-[#1d1d1f] dark:text-[#f5f5f7]">
           {title}
         </span>
@@ -32,7 +29,7 @@ const Navbar = ({ title = 'AI Knowledge' }) => {
         <button
           onClick={() => navigate('/admin')}
           className="
-            flex items-center gap-1.5 px-3 py-1.5
+            flex items-center gap-1.5 px-3 py-1.5 cursor-pointer
             rounded-full text-[#1d1d1f] dark:text-white/86
             hover:bg-black/6 dark:hover:bg-white/10
             transition-all active:scale-[0.97]
@@ -50,13 +47,7 @@ const Navbar = ({ title = 'AI Knowledge' }) => {
         {/* Theme toggle */}
         <button
           onClick={() => setIsDark(p => !p)}
-          className="
-            w-8.5 h-8.5 rounded-full flex items-center justify-center
-            hover:bg-black/6 dark:hover:bg-white/10
-            transition-all active:scale-[0.93]
-            text-[#1d1d1f] dark:text-white/86
-          "
-        >
+          className="w-8.5 h-8.5 rounded-full flex items-center justify-center cursor-pointer hover:bg-black/6 dark:hover:bg-white/10 transition-all active:scale-[0.93] text-[#1d1d1f] dark:text-white/86">
           {isDark
             ? <Sun size={16} strokeWidth={1.5} />
             : <Moon size={16} strokeWidth={1.5} />
@@ -65,7 +56,7 @@ const Navbar = ({ title = 'AI Knowledge' }) => {
 
         {/* Sign In */}
         <button className="
-          px-4 py-1.75 rounded-full
+          px-4 py-1.75 rounded-full cursor-pointer
           bg-[#0071e3] dark:bg-white
           text-white dark:text-[#1d1d1f]
           text-[13px] font-normal tracking-[-0.01em]

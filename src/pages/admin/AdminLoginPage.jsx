@@ -37,14 +37,14 @@ export default function AdminLoginPage() {
 
   return (
     <div className="h-screen w-full grid grid-cols-1 md:grid-cols-2 overflow-hidden bg-white dark:bg-black select-none">
-      
+
       {/* ── LEFT PANEL — iPhone Style Login Form ── */}
       <div className="flex flex-col h-full px-8 lg:px-16 py-8 relative bg-white dark:bg-black">
-        
+
         {/* Back Link - iPhone Style */}
-    <button
-  onClick={() => navigate('/')}
-  className="
+        <button
+          onClick={() => navigate('/')}
+          className="
     group flex items-center w-fit gap-1 px-3 py-1.5 cursor-pointer rounded-full
     text-[12px] font-medium tracking-tight
     text-[#8e8e93] dark:text-[#98989e]
@@ -53,17 +53,17 @@ export default function AdminLoginPage() {
     transition-all duration-300 ease-out
     active:scale-95
   "
->
-  <ArrowLeft 
-    size={14} 
-    className="transform group-hover:-translate-x-1 transition-transform duration-300 ease-out" 
-  />
-  <span className="relative">
-    Back
-  </span>
-</button>
+        >
+          <ArrowLeft
+            size={14}
+            className="transform group-hover:-translate-x-1 transition-transform duration-300 ease-out"
+          />
+          <span className="relative">
+            Back
+          </span>
+        </button>
         <div className="flex-1 flex flex-col justify-center max-w-md mx-auto w-full animate-fade-in">
-          
+
           {/* Logo & Title - iPhone Style */}
           <div className="mb-12 text-center md:text-left">
             <h1 className="text-3xl font-semibold text-[#1d1d1f] dark:text-white tracking-tight">
@@ -87,7 +87,7 @@ export default function AdminLoginPage() {
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder="John Appleseed"
-                    className="w-full pl-11 pr-4 py-3.5 bg-white dark:bg-[#1c1c1e] border border-black/[0.08] dark:border-white/[0.08] rounded-xl focus:border-[#0071e3] dark:focus:border-[#0a84ff] focus:outline-none focus:ring-1 focus:ring-[#0071e3]/20 dark:focus:ring-[#0a84ff]/20 transition-all text-[15px] text-[#1d1d1f] dark:text-white placeholder:text-[#8e8e93]"
+                    className="w-full pl-11 pr-4 py-3.5 bg-white dark:bg-[#1c1c1e] border border-black/8 dark:border-white/8 rounded-xl focus:border-[#0071e3] dark:focus:border-[#0a84ff] focus:outline-none focus:ring-1 focus:ring-[#0071e3]/20 dark:focus:ring-[#0a84ff]/20 transition-all text-[15px] text-[#1d1d1f] dark:text-white placeholder:text-[#8e8e93]"
                   />
                 </div>
               </div>
@@ -104,7 +104,7 @@ export default function AdminLoginPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="name@example.com"
-                  className="w-full pl-11 pr-4 py-3.5 bg-white dark:bg-[#1c1c1e] border border-black/[0.08] dark:border-white/[0.08] rounded-xl focus:border-[#0071e3] dark:focus:border-[#0a84ff] focus:outline-none focus:ring-1 focus:ring-[#0071e3]/20 dark:focus:ring-[#0a84ff]/20 transition-all text-[15px] text-[#1d1d1f] dark:text-white placeholder:text-[#8e8e93]"
+                  className="w-full pl-11 pr-4 py-3.5 bg-white dark:bg-[#1c1c1e] border border-black/8 dark:border-white/8 rounded-xl focus:border-[#0071e3] dark:focus:border-[#0a84ff] focus:outline-none focus:ring-1 focus:ring-[#0071e3]/20 dark:focus:ring-[#0a84ff]/20 transition-all text-[15px] text-[#1d1d1f] dark:text-white placeholder:text-[#8e8e93]"
                 />
               </div>
             </div>
@@ -120,7 +120,7 @@ export default function AdminLoginPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full pl-11 pr-12 py-3.5 bg-white dark:bg-[#1c1c1e] border border-black/[0.08] dark:border-white/[0.08] rounded-xl focus:border-[#0071e3] dark:focus:border-[#0a84ff] focus:outline-none focus:ring-1 focus:ring-[#0071e3]/20 dark:focus:ring-[#0a84ff]/20 transition-all text-[15px] text-[#1d1d1f] dark:text-white placeholder:text-[#8e8e93]"
+                  className="w-full pl-11 pr-12 py-3.5 bg-white dark:bg-[#1c1c1e] border border-black/8 dark:border-white/8 rounded-xl focus:border-[#0071e3] dark:focus:border-[#0a84ff] focus:outline-none focus:ring-1 focus:ring-[#0071e3]/20 dark:focus:ring-[#0a84ff]/20 transition-all text-[15px] text-[#1d1d1f] dark:text-white placeholder:text-[#8e8e93]"
                 />
                 <button
                   type="button"
@@ -191,6 +191,19 @@ export default function AdminLoginPage() {
             clumpFactor={1.2}
             speed={0.3}
           />
+        </div>
+          {/* iPhone-style overlay text */}
+          <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+          <div className="text-center">
+            <h2 className="text-white text-3xl font-semibold tracking-tight mb-2">AI Knowledge System</h2>
+            <p className="text-white/70 text-[15px] max-w-xs mx-auto">
+              Intelligent document retrieval and conversational AI
+            </p>
+            <div className="flex items-center justify-center gap-2 mt-6">
+              <Sparkles size={14} className="text-white/60" />
+              <span className="text-white/50 text-[11px] font-medium">RAG Powered</span>
+            </div>
+          </div>
         </div>
       </div>
     </div>

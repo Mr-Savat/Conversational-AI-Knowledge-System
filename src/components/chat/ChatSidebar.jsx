@@ -69,8 +69,8 @@ const ChatSidebar = ({ onSelectConversation, currentConversationId, onNewChat })
       <div className="flex flex-col items-center h-full w-14 shrink-0 py-3 gap-2 border-r border-black/[0.07] dark:border-white/[0.07] bg-[#fafafc]/95 dark:bg-[#1c1c1e]/95 backdrop-blur-xl">
 
         {/* Logo/Icon at top */}
-        <div className="w-8 h-8 rounded-xl bg-[#1d1d1f] dark:bg-white flex items-center justify-center mb-2">
-          <Brain size={14} className="text-white dark:text-[#1d1d1f]" strokeWidth={1.6} />
+        <div className="w-7 h-7 rounded-[7px] bg-[#0071e3] flex items-center justify-center shrink-0">
+          <Brain size={15} className="text-white" strokeWidth={1.8} />
         </div>
 
         {/* Action Buttons Container */}
@@ -115,9 +115,8 @@ const ChatSidebar = ({ onSelectConversation, currentConversationId, onNewChat })
       <div className="px-3 pt-4 pb-3 border-b border-black/[0.07] dark:border-white/[0.07] shrink-0">
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2.5">
-            <div className="w-7 h-7 min-w-7 bg-[#1d1d1f] dark:bg-white rounded-lg
-              flex items-center justify-center">
-              <Brain size={13} className="text-white dark:text-[#1d1d1f]" strokeWidth={1.8} />
+            <div className="w-7 h-7 rounded-[7px] bg-[#0071e3] flex items-center justify-center shrink-0">
+              <Brain size={15} className="text-white" strokeWidth={1.8} />
             </div>
             <span className="text-[15px] font-semibold tracking-[-0.02em]
               text-[#1d1d1f] dark:text-white whitespace-nowrap">
@@ -211,14 +210,14 @@ const ChatSidebar = ({ onSelectConversation, currentConversationId, onNewChat })
                 className="w-full flex items-center gap-2.5 px-3.5 py-2.5
       text-[13px] text-[#1d1d1f] dark:text-white
       tracking-[-0.01em] hover:bg-black/4 dark:hover:bg-white/6
-      transition-colors"
+      transition-colors cursor-pointer"
               >
                 <IconComponent size={14} strokeWidth={1.6} /> {label}
               </button>
             ))}
             <div className="h-px bg-black/[0.07] dark:bg-white/[0.07] my-0.5" />
             <button className="w-full flex items-center gap-2.5 px-3.5 py-2.5
-              text-[13px] text-[#ff3b30] tracking-[-0.01em]
+              text-[13px] text-[#ff3b30] tracking-[-0.01em] cursor-pointer
               hover:bg-black/4 dark:hover:bg-white/6 transition-colors">
               <LogOut size={14} strokeWidth={1.6} /> Sign Out
             </button>
@@ -227,7 +226,7 @@ const ChatSidebar = ({ onSelectConversation, currentConversationId, onNewChat })
         <button
           onClick={() => setShowUserMenu(p => !p)}
           className="w-full flex items-center gap-2.5 p-2 rounded-[9px]
-            hover:bg-black/4 dark:hover:bg-white/6 transition-colors"
+            hover:bg-black/4 dark:hover:bg-white/6 transition-colors cursor-pointer"
         >
           <div className="w-7.5 h-7.5 min-w-7.5 rounded-full
             bg-linear-to-br from-[#0071e3] to-[#34aadc]
@@ -240,7 +239,12 @@ const ChatSidebar = ({ onSelectConversation, currentConversationId, onNewChat })
               tracking-[-0.01em] truncate">Savat Chhan</p>
             <p className="text-[11px] text-[#8e8e93] mt-px">Pro Plan</p>
           </div>
-          <ChevronDown size={13} className="text-[#8e8e93] shrink-0" strokeWidth={1.8} />
+          <ChevronDown
+            size={13}
+            strokeWidth={1.8}
+            className={`text-[#8e8e93] shrink-0 transition-transform duration-200 ${showUserMenu ? "rotate-180" : ""
+              }`}
+          />
         </button>
       </div>
     </div>
@@ -263,8 +267,8 @@ const ConversationItem = ({ conv, isActive, onSelect, onDelete, isDeleting }) =>
     </div>
     <div className="flex-1 min-w-0">
       <p className={`text-[13px] tracking-[-0.01em] truncate ${isActive
-          ? 'font-medium text-[#0071e3]'
-          : 'font-normal text-[#1d1d1f] dark:text-white/90'
+        ? 'font-medium text-[#0071e3]'
+        : 'font-normal text-[#1d1d1f] dark:text-white/90'
         }`}>
         {conv.title || 'New Conversation'}
       </p>
@@ -274,7 +278,7 @@ const ConversationItem = ({ conv, isActive, onSelect, onDelete, isDeleting }) =>
       onClick={e => onDelete(e, conv.id)}
       disabled={isDeleting}
       className="opacity-0 group-hover:opacity-100 w-6 h-6 min-w-6
-        rounded-md flex items-center justify-center
+        rounded-md flex items-center justify-center cursor-pointer
         text-[#8e8e93] hover:bg-[#ff3b30]/10 hover:text-[#ff3b30] transition-all"
     >
       {isDeleting

@@ -10,7 +10,7 @@ const ChatInput = ({ value, onChange, onSend, loading }) => {
   };
 
   return (
-    <div className="relative group">
+    <div className="relative group flex">
       <textarea
         value={value}
         onChange={onChange}

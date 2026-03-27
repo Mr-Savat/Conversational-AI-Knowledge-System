@@ -24,10 +24,12 @@ const App = () => {
 
           {/* ADMIN PANEL (Nested Routes) */}
           <Route path="/admin" element={<AdminLayout />}>
-            <Route index element={<div className="p-8">Dashboard Coming Soon...</div>} />
+            <Route index element={<div className="p-8">
+              <h1 className="text-2xl font-semibold text-[#1d1d1f] dark:text-white tracking-tight">Coming Soon...</h1>
+            </div>} />
             <Route path="knowledge" element={<AdminKnowledgePage />} />
             <Route path="sources" element={<AdminSourcesPage />} />
-            <Route path="settings" element={<div className="p-8">Settings Coming Soon...</div>} />
+            <Route path="settings" element={<div className="p-8">Coming Soon...</div>} />
             {/* <Route path="*" element={<Navigate to="/admin" replace />} /> */}
             <Route path="*" element={<NotFoundPage />} />
           </Route>

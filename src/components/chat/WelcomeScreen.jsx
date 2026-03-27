@@ -34,7 +34,7 @@ const WelcomeScreen = ({ onSelectSuggestion }) => {
           <button 
             key={index} 
             onClick={() => onSelectSuggestion(item.label)}
-            className="group flex items-center gap-4 p-4 bg-white dark:bg-[#1c1c1e] border border-black/6 dark:border-white/6 rounded-2xl hover:border-[#0071e3]/30 dark:hover:border-[#0a84ff]/30 hover:shadow-md transition-all duration-200 text-left"
+            className="group flex items-center gap-4 p-4 bg-white dark:bg-[#1c1c1e] border border-black/6 dark:border-white/6 rounded-2xl hover:border-[#0071e3]/30 dark:hover:border-[#0a84ff]/30 hover:shadow-md transition-all duration-200 text-left cursor-pointer"
           >
             {/* Icon Container */}
             <span className="w-10 h-10 rounded-xl flex items-center justify-center bg-black/4 dark:bg-white/8 text-[#0071e3] dark:text-[#0a84ff] group-hover:bg-[#0071e3] group-hover:text-white transition-all duration-200">
