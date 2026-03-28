@@ -12,7 +12,7 @@ class ApiService {
   async getAuthToken() {
     try {
       const { data: { session } } = await supabase.auth.getSession();
-      console.log('Your actual token:', session?.access_token); // <-- see token here
+      console.log('Your actual token:', session?.access_token);
       return session?.access_token;
     } catch (error) {
       console.error('Error getting auth token:', error);
