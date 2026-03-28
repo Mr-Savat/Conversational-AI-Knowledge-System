@@ -37,7 +37,7 @@ const Navbar = ({ title = 'AI Knowledge' }) => {
         >
           <LayoutDashboard size={15} strokeWidth={1.6} />
           <span className="hidden md:block text-xs font-medium text-[#6e6e73] dark:text-white/50 tracking-[0.01em]">
-            Console
+            Admin
           </span>
         </button>
 

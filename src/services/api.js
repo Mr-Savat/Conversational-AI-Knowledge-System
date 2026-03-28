@@ -1,4 +1,6 @@
 // services/api.js
+import { supabase } from './supabase';
+
 const API_BASE_URL = 'http://localhost:8000';
 
 class ApiService {
@@ -7,20 +9,56 @@ class ApiService {
     console.log('API Base URL:', this.baseURL);
   }
 
+  async getAuthToken() {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      console.log('Your actual token:', session?.access_token); // <-- see token here
+      return session?.access_token;
+    } catch (error) {
+      console.error('Error getting auth token:', error);
+      return null;
+    }
+  }
+
   async request(endpoint, options = {}) {
+    const token = await this.getAuthToken();
     const url = `${this.baseURL}${endpoint}`;
+
+    const headers = {
+      'Content-Type': 'application/json',
+      ...(token && { 'Authorization': `Bearer ${token}` }),
+      ...options.headers,
+    };
+
     console.log('Requesting:', url);
+    console.log('Has token:', !!token);
 
     try {
       const response = await fetch(url, {
         ...options,
-        headers: {
-          'Content-Type': 'application/json',
-          ...options.headers,
-        },
+        headers,
       });
 
       console.log('Response status:', response.status);
+
+      // If 401 or 403, token might be invalid
+      if (response.status === 401 || response.status === 403) {
+        // Try to refresh the session
+        const { data: { session } } = await supabase.auth.refreshSession();
+        if (session) {
+          // Retry with new token
+          const newHeaders = {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${session.access_token}`,
+            ...options.headers,
+          };
+          const retryResponse = await fetch(url, { ...options, headers: newHeaders });
+          if (retryResponse.ok) {
+            return await retryResponse.json();
+          }
+        }
+        throw new Error('Not authenticated');
+      }
 
       if (!response.ok) {
         let errorMessage;
@@ -63,12 +101,16 @@ class ApiService {
     formData.append('title', title);
     formData.append('type', type);
 
+    const token = await this.getAuthToken();
     const url = `${this.baseURL}/api/knowledge/upload`;
 
     try {
       const response = await fetch(url, {
         method: 'POST',
         body: formData,
+        headers: {
+          ...(token && { 'Authorization': `Bearer ${token}` }),
+        },
       });
 
       if (!response.ok) {
@@ -93,7 +135,7 @@ class ApiService {
     console.log('Fetching data sources...');
     return this.request('/api/sources');
   }
-  
+
 
   async addDataSource(url, title) {
     return this.request('/api/sources', {

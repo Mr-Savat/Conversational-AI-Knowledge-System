@@ -263,7 +263,7 @@ const AdminSourcesPage = () => {
             <p className="text-[13px] text-[#8e8e93] mb-4">Add your first document, text, or URL to get started</p>
             <button
               onClick={() => { setFormType('text'); setShowForm(true); }}
-              className="px-4 py-2 bg-[#0071e3] text-white rounded-xl text-[13px] font-medium hover:bg-[#0077ed] transition-all"
+              className="px-4 py-2 cursor-pointer bg-[#0071e3] text-white rounded-xl text-[13px] font-medium hover:bg-[#0077ed] transition-all"
             >
               + Add Your First Source
             </button>
@@ -365,7 +365,7 @@ const AdminSourcesPage = () => {
                 </h2>
                 <button
                   onClick={() => setShowForm(false)}
-                  className="w-8 h-8 rounded-full flex items-center justify-center text-[#8e8e93] hover:bg-black/4 dark:hover:bg-white/8 transition-all"
+                  className="w-8 h-8 cursor-pointer rounded-full flex items-center justify-center text-[#8e8e93] hover:bg-black/4 dark:hover:bg-white/8 transition-all"
                 >
                   <X size={18} />
                 </button>
