@@ -55,7 +55,7 @@ const Navbar = ({ title = 'AI Knowledge' }) => {
         </button>
 
         {/* Sign In */}
-        <button className="
+        {/* <button className="
           px-4 py-1.75 rounded-full cursor-pointer
           bg-[#0071e3] dark:bg-white
           text-white dark:text-[#1d1d1f]
@@ -65,7 +65,7 @@ const Navbar = ({ title = 'AI Knowledge' }) => {
           whitespace-nowrap
         ">
           Sign In
-        </button>
+        </button> */}
       </div>
     </nav>
   );

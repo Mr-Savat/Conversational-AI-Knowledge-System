@@ -183,8 +183,26 @@ export const useAdminStore = create((set, get) => ({
       const { data: { session } } = await supabase.auth.getSession();
 
       if (session) {
+        // Fetch user profile from profiles table
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('role, name, avatar_url')
+          .eq('id', session.user.id)
+          .single();
+
+        // Merge auth user with profile data
+        const userWithProfile = {
+          ...session.user,
+          user_metadata: {
+            ...session.user.user_metadata,
+            role: profile?.role || 'user',
+            name: profile?.name || session.user.user_metadata?.name || session.user.email?.split('@')[0],
+            avatar_url: profile?.avatar_url,
+          }
+        };
+
         set({
-          user: session.user,
+          user: userWithProfile,
           session,
           isAuthenticated: true,
           isAuthLoading: false,
@@ -199,10 +217,27 @@ export const useAdminStore = create((set, get) => ({
       }
 
       // Listen for auth changes
-      supabase.auth.onAuthStateChange((_event, session) => {
+      supabase.auth.onAuthStateChange(async (_event, session) => {
         if (session) {
+          // Fetch profile on auth change
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('role, name, avatar_url')
+            .eq('id', session.user.id)
+            .single();
+
+          const userWithProfile = {
+            ...session.user,
+            user_metadata: {
+              ...session.user.user_metadata,
+              role: profile?.role || 'user',
+              name: profile?.name || session.user.user_metadata?.name || session.user.email?.split('@')[0],
+              avatar_url: profile?.avatar_url,
+            }
+          };
+
           set({
-            user: session.user,
+            user: userWithProfile,
             session,
             isAuthenticated: true,
             authError: null,
@@ -362,4 +397,47 @@ export const useAdminStore = create((set, get) => ({
       return { success: false, error: error.message };
     }
   },
+
+// Update password after reset
+updatePassword: async (newPassword) => {
+  set({ authError: null, isAuthLoading: true });
+  
+  try {
+    const { error } = await supabase.auth.updateUser({
+      password: newPassword
+    });
+    
+    if (error) throw error;
+    
+    set({ isAuthLoading: false });
+    return { success: true };
+    
+  } catch (error) {
+    set({ authError: error.message, isAuthLoading: false });
+    return { success: false, error: error.message };
+  }
+},
+
+
+// Reset password
+resetPassword: async (email) => {
+  set({ authError: null, isAuthLoading: true });
+  
+  try {
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/auth/callback`,
+    });
+    
+    if (error) throw error;
+    
+    set({ isAuthLoading: false });
+    return { success: true };
+    
+  } catch (error) {
+    set({ authError: error.message, isAuthLoading: false });
+    return { success: false, error: error.message };
+  }
+},
+
+setAuthError: (error) => set({ authError: error }),
 }));

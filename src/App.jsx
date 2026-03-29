@@ -9,6 +9,7 @@ import AdminSourcesPage from './pages/admin/AdminSourcesPage';
 import NotFoundPage from './pages/notfondpage/NotFoundPage';
 import Auth from './pages/Auth';
 import AuthCallback from './pages/AuthCallback';
+import ResetPassword from './pages/ResetPassword';
 
 const App = () => {
   const { initAuth, isAuthLoading } = useAdminStore();
@@ -45,6 +46,7 @@ const App = () => {
 
           {/* AUTH - Public */}
           <Route path="/auth" element={<Auth />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
 
           {/* Redirect old admin login to new auth page */}
           <Route path="/admin/login" element={<Navigate to="/auth" replace />} />

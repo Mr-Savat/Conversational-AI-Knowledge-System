@@ -37,38 +37,51 @@ const useAIChat = () => {
 
   const handleSend = useCallback(async () => {
     if (!input.trim() || loading) return;
-
+  
     const userMessage = input.trim();
     setInput('');
     
     // Add user message to UI
     setMessages(prev => [...prev, { role: 'user', text: userMessage }]);
+    
+    // Add loading message (empty text with loading state)
+    setMessages(prev => [...prev, { role: 'ai', text: '', isLoading: true }]);
     setLoading(true);
-
+  
     try {
       // Send to backend
       const response = await api.sendChatMessage({
         message: userMessage,
         conversation_id: conversationId,
       });
-
+  
       // Update conversation ID (for follow-up questions)
       if (!conversationId) {
         setConversationId(response.conversation_id);
       }
       
-      // Add AI response to UI
-      setMessages(prev => [...prev, { 
-        role: 'ai', 
-        text: response.content 
-      }]);
+      // Replace loading message with actual AI response
+      setMessages(prev => {
+        const newMessages = [...prev];
+        newMessages[newMessages.length - 1] = { 
+          role: 'ai', 
+          text: response.content,
+          created_at: response.created_at
+        };
+        return newMessages;
+      });
       
     } catch (error) {
       console.error('Chat error:', error);
-      setMessages(prev => [...prev, { 
-        role: 'ai', 
-        text: `Sorry, I encountered an error: ${error.message}. Please try again.` 
-      }]);
+      // Replace loading message with error
+      setMessages(prev => {
+        const newMessages = [...prev];
+        newMessages[newMessages.length - 1] = { 
+          role: 'ai', 
+          text: `Sorry, I encountered an error: ${error.message}. Please try again.`
+        };
+        return newMessages;
+      });
     } finally {
       setLoading(false);
     }

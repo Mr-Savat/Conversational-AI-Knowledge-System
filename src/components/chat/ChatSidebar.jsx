@@ -5,6 +5,7 @@ import {
   ChevronLeft, ChevronRight, PenSquare,
 } from 'lucide-react';
 import api from '../../services/api';
+import { useAdminStore } from '../../store/adminStore';
 
 const ChatSidebar = ({ onSelectConversation, currentConversationId, onNewChat }) => {
   const [conversations, setConversations] = useState([]);
@@ -13,6 +14,8 @@ const ChatSidebar = ({ onSelectConversation, currentConversationId, onNewChat })
   const [expanded, setExpanded] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const { signOut, user } = useAdminStore();
+
 
   useEffect(() => { loadConversations(); }, []);
 
@@ -201,24 +204,35 @@ const ChatSidebar = ({ onSelectConversation, currentConversationId, onNewChat })
       <div className="border-t border-black/[0.07] dark:border-white/[0.07] p-2 shrink-0 relative">
         {showUserMenu && (
           <div className="absolute bottom-full left-2 right-2 mb-1.5
-            bg-white dark:bg-[#2c2c2e]
-            rounded-xl border border-black/10 dark:border-white/10
-            shadow-[0_8px_32px_rgba(0,0,0,0.12)] overflow-hidden z-10">
-            {[['Profile', User], ['Settings', Settings]].map(([label, IconComponent]) => (
-              <button
-                key={label}
-                className="w-full flex items-center gap-2.5 px-3.5 py-2.5
-      text-[13px] text-[#1d1d1f] dark:text-white
-      tracking-[-0.01em] hover:bg-black/4 dark:hover:bg-white/6
-      transition-colors cursor-pointer"
-              >
-                <IconComponent size={14} strokeWidth={1.6} /> {label}
-              </button>
-            ))}
+      bg-white dark:bg-[#2c2c2e]
+      rounded-xl border border-black/10 dark:border-white/10
+      shadow-[0_8px_32px_rgba(0,0,0,0.12)] overflow-hidden z-10">
+            <button
+              className="w-full flex items-center gap-2.5 px-3.5 py-2.5
+          text-[13px] text-[#1d1d1f] dark:text-white
+          tracking-[-0.01em] hover:bg-black/4 dark:hover:bg-white/6
+          transition-colors cursor-pointer"
+            >
+              <User size={14} strokeWidth={1.6} /> Profile
+            </button>
+            <button
+              className="w-full flex items-center gap-2.5 px-3.5 py-2.5
+          text-[13px] text-[#1d1d1f] dark:text-white
+          tracking-[-0.01em] hover:bg-black/4 dark:hover:bg-white/6
+          transition-colors cursor-pointer"
+            >
+              <Settings size={14} strokeWidth={1.6} /> Settings
+            </button>
             <div className="h-px bg-black/[0.07] dark:bg-white/[0.07] my-0.5" />
-            <button className="w-full flex items-center gap-2.5 px-3.5 py-2.5
-              text-[13px] text-[#ff3b30] tracking-[-0.01em] cursor-pointer
-              hover:bg-black/4 dark:hover:bg-white/6 transition-colors">
+            <button
+              onClick={async () => {
+                await signOut();
+                window.location.href = '/auth';
+              }}
+              className="w-full flex items-center gap-2.5 px-3.5 py-2.5
+          text-[13px] text-[#ff3b30] tracking-[-0.01em] cursor-pointer
+          hover:bg-black/4 dark:hover:bg-white/6 transition-colors"
+            >
               <LogOut size={14} strokeWidth={1.6} /> Sign Out
             </button>
           </div>
@@ -226,24 +240,27 @@ const ChatSidebar = ({ onSelectConversation, currentConversationId, onNewChat })
         <button
           onClick={() => setShowUserMenu(p => !p)}
           className="w-full flex items-center gap-2.5 p-2 rounded-[9px]
-            hover:bg-black/4 dark:hover:bg-white/6 transition-colors cursor-pointer"
+          hover:bg-black/4 dark:hover:bg-white/6 transition-colors cursor-pointer"
         >
           <div className="w-7.5 h-7.5 min-w-7.5 rounded-full
             bg-linear-to-br from-[#0071e3] to-[#34aadc]
             flex items-center justify-center
             text-[11px] font-semibold text-white tracking-[0.02em]">
-            SC
+            {user?.user_metadata?.name?.[0] || user?.email?.[0]?.toUpperCase() || 'U'}
           </div>
           <div className="flex-1 text-left min-w-0">
             <p className="text-[13px] font-medium text-[#1d1d1f] dark:text-white
-              tracking-[-0.01em] truncate">Savat Chhan</p>
-            <p className="text-[11px] text-[#8e8e93] mt-px">Pro Plan</p>
+        tracking-[-0.01em] truncate">
+              {user?.user_metadata?.name || user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'User'}
+            </p>
+            <p className="text-[11px] text-[#8e8e93] mt-px">
+              {user?.user_metadata?.role === 'admin' ? 'Admin' : 'User'}
+            </p>
           </div>
           <ChevronDown
             size={13}
             strokeWidth={1.8}
-            className={`text-[#8e8e93] shrink-0 transition-transform duration-200 ${showUserMenu ? "rotate-180" : ""
-              }`}
+            className={`text-[#8e8e93] shrink-0 transition-transform duration-200 ${showUserMenu ? "rotate-180" : ""}`}
           />
         </button>
       </div>
