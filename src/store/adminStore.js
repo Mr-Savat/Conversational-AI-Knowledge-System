@@ -376,13 +376,37 @@ export const useAdminStore = create((set, get) => ({
   },
 
   // Sign Out
+  // signOut: async () => {
+  //   set({ isAuthLoading: true });
+
+  //   try {
+  //     const { error } = await supabase.auth.signOut();
+  //     if (error) throw error;
+
+  //     set({
+  //       user: null,
+  //       session: null,
+  //       isAuthenticated: false,
+  //       authError: null,
+  //       isAuthLoading: false,
+  //     });
+
+  //     return { success: true };
+  //   } catch (error) {
+  //     set({ authError: error.message, isAuthLoading: false });
+  //     return { success: false, error: error.message };
+  //   }
+  // },
+
+
   signOut: async () => {
     set({ isAuthLoading: true });
-
+    
     try {
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
-
+      
+      // Clear all state
       set({
         user: null,
         session: null,
@@ -390,10 +414,15 @@ export const useAdminStore = create((set, get) => ({
         authError: null,
         isAuthLoading: false,
       });
-
+      
       return { success: true };
+      
     } catch (error) {
-      set({ authError: error.message, isAuthLoading: false });
+      console.error('Sign out error:', error);
+      set({ 
+        authError: error.message, 
+        isAuthLoading: false 
+      });
       return { success: false, error: error.message };
     }
   },

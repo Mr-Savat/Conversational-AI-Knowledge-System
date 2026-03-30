@@ -226,6 +226,7 @@ const ChatSidebar = ({ onSelectConversation, currentConversationId, onNewChat })
             <div className="h-px bg-black/[0.07] dark:bg-white/[0.07] my-0.5" />
             <button
               onClick={async () => {
+                setShowUserMenu(false);
                 await signOut();
                 window.location.href = '/auth';
               }}

@@ -14,7 +14,7 @@ const useAIChat = () => {
       const data = await api.getConversation(id);
       setConversationId(data.conversation.id);
       setConversationTitle(data.conversation.title);
-      
+
       // Format messages for display
       const formattedMessages = data.messages.map(msg => ({
         role: msg.role === 'user' ? 'user' : 'ai',
@@ -37,54 +37,48 @@ const useAIChat = () => {
 
   const handleSend = useCallback(async () => {
     if (!input.trim() || loading) return;
-  
+
     const userMessage = input.trim();
     setInput('');
-    
-    // Add user message to UI
+
+    // Add user message
     setMessages(prev => [...prev, { role: 'user', text: userMessage }]);
-    
-    // Add loading message (empty text with loading state)
-    setMessages(prev => [...prev, { role: 'ai', text: '', isLoading: true }]);
+
+    // Add empty AI message that will be updated
+    const aiMessageId = Date.now().toString();
+    setMessages(prev => [...prev, { id: aiMessageId, role: 'ai', text: '' }]);
     setLoading(true);
-  
-    try {
-      // Send to backend
-      const response = await api.sendChatMessage({
-        message: userMessage,
-        conversation_id: conversationId,
-      });
-  
-      // Update conversation ID (for follow-up questions)
-      if (!conversationId) {
-        setConversationId(response.conversation_id);
+
+    let currentConversationId = conversationId;
+    let fullResponse = '';
+
+    await api.sendChatMessageStream(
+      userMessage,
+      currentConversationId,
+      // onChunk - called for each word/character
+      (chunk) => {
+        fullResponse += chunk;
+        setMessages(prev => prev.map(msg =>
+          msg.id === aiMessageId
+            ? { ...msg, text: fullResponse }
+            : msg
+        ));
+      },
+      // onDone - called when stream completes
+      async () => {
+        setLoading(false);
+      },
+      // onError - called if error occurs
+      (error) => {
+        console.error('Stream error:', error);
+        setMessages(prev => prev.map(msg =>
+          msg.id === aiMessageId
+            ? { ...msg, text: `Error: ${error}` }
+            : msg
+        ));
+        setLoading(false);
       }
-      
-      // Replace loading message with actual AI response
-      setMessages(prev => {
-        const newMessages = [...prev];
-        newMessages[newMessages.length - 1] = { 
-          role: 'ai', 
-          text: response.content,
-          created_at: response.created_at
-        };
-        return newMessages;
-      });
-      
-    } catch (error) {
-      console.error('Chat error:', error);
-      // Replace loading message with error
-      setMessages(prev => {
-        const newMessages = [...prev];
-        newMessages[newMessages.length - 1] = { 
-          role: 'ai', 
-          text: `Sorry, I encountered an error: ${error.message}. Please try again.`
-        };
-        return newMessages;
-      });
-    } finally {
-      setLoading(false);
-    }
+    );
   }, [input, loading, conversationId]);
 
   const handleSuggestion = useCallback((suggestion) => {

@@ -176,6 +176,55 @@ class ApiService {
       method: 'DELETE',
     });
   }
+
+  // Add this new method to your ApiService class
+  async sendChatMessageStream(message, conversationId, onChunk, onDone, onError) {
+    const token = await this.getAuthToken();
+    const url = `${this.baseURL}/api/chat/stream`;
+
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({ message, conversation_id: conversationId }),
+      });
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = '';
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split('\n');
+        buffer = lines.pop() || '';
+
+        for (const line of lines) {
+          if (line.startsWith('data: ')) {
+            const data = line.slice(6);
+            if (data === '[DONE]') {
+              if (onDone) onDone();
+              return;
+            }
+            try {
+              const parsed = JSON.parse(data);
+              if (parsed.content && onChunk) {
+                onChunk(parsed.content);
+              }
+            } catch (e) { }
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Stream error:', error);
+      if (onError) onError(error.message);
+    }
+  }
 }
 
 export default new ApiService();
