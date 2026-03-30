@@ -3,6 +3,7 @@ import { supabase } from './supabase';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
+console.log('API_BASE_URL:', API_BASE_URL);
 class ApiService {
   constructor() {
     this.baseURL = API_BASE_URL;
