@@ -1,4 +1,4 @@
-import { useState, useCallback, } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import api from '../services/api';
 
 const useAIChat = () => {
@@ -7,6 +7,18 @@ const useAIChat = () => {
   const [loading, setLoading] = useState(false);
   const [conversationId, setConversationId] = useState(null);
   const [conversationTitle, setConversationTitle] = useState('');
+  
+  // AbortController to kill stream on navigation
+  const abortControllerRef = useRef(null);
+
+  // Cleanup: Abort stream if the component unmounts (e.g. user goes to Admin dashboard)
+  useEffect(() => {
+    return () => {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+    };
+  }, []);
 
   const loadConversation = useCallback(async (id) => {
     try {
@@ -29,6 +41,7 @@ const useAIChat = () => {
   }, []);
 
   const startNewChat = useCallback(() => {
+    if (abortControllerRef.current) abortControllerRef.current.abort();
     setMessages([]);
     setConversationId(null);
     setConversationTitle('');
@@ -78,6 +91,13 @@ const useAIChat = () => {
     }
     // ========== END GREETING DETECTION ==========
   
+    // Cancel any previous stream instantly
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+    abortControllerRef.current = new AbortController();
+    const signal = abortControllerRef.current.signal;
+
     // Normal flow - add empty AI message
     const aiMessageId = Date.now().toString();
     setMessages(prev => [...prev, { id: aiMessageId, role: 'ai', text: '' }]);
@@ -101,9 +121,14 @@ const useAIChat = () => {
       // onDone - called when stream completes
       async () => {
         setLoading(false);
+        abortControllerRef.current = null;
       },
       // onError - called if error occurs
       (error) => {
+        if (error === 'AbortError') {
+          // Silent fail on deliberate abort so UI doesn't look broken
+          return;
+        }
         console.error('Stream error:', error);
         setMessages(prev => prev.map(msg =>
           msg.id === aiMessageId
@@ -111,7 +136,9 @@ const useAIChat = () => {
             : msg
         ));
         setLoading(false);
-      }
+        abortControllerRef.current = null;
+      },
+      signal  // Pass the signal to terminate network request seamlessly!
     );
   }, [input, loading, conversationId]);
 
