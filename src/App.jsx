@@ -6,6 +6,7 @@ import AdminLayout from './layouts/AdminLayout';
 import ChatPage from './pages/ChatPage';
 import AdminKnowledgePage from './pages/admin/AdminKnowledgePage';
 import AdminSourcesPage from './pages/admin/AdminSourcesPage';
+import AdminDashboardPage from './pages/admin/AdminDashboardPage';
 import NotFoundPage from './pages/notfondpage/NotFoundPage';
 import Auth from './pages/Auth';
 import AuthCallback from './pages/AuthCallback';
@@ -57,14 +58,7 @@ const App = () => {
               <AdminLayout />
             </ProtectedRoute>
           }>
-            <Route index element={
-              <div className="p-8">
-                <h1 className="text-2xl font-semibold text-[#1d1d1f] dark:text-white tracking-tight">
-                  Admin Dashboard
-                </h1>
-                <p className="text-[#8e8e93] mt-2">Manage your RAG system knowledge base</p>
-              </div>
-            } />
+            <Route index element={<AdminDashboardPage />} />
             <Route path="knowledge" element={<AdminKnowledgePage />} />
             <Route path="sources" element={<AdminSourcesPage />} />
             <Route path="settings" element={

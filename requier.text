@@ -1,0 +1,54 @@
+# Backend Requirements for Admin Dashboard Analytics
+
+To fully power the new Admin Dashboard and replace the mocked data with real analytics, the backend (FastAPI/Python) will need to implement the following endpoints and data aggregations:
+
+## 1. High-Level Dashboard Stats
+**Endpoint:** `GET /api/analytics/summary`
+**Description:** Returns the total counts for the high-level metrics cards.
+**Response Format:**
+```json
+{
+  "total_sources": 24,          // Combined count of all knowledge documents + URLs
+  "total_conversations": 156,   // Total number of chat sessions created
+  "total_users": 42,            // Count of distinct user_ids in the system
+  "active_users": 15            // Count of distinct user_ids who interacted in the last 7 days
+}
+```
+
+## 2. Usage Over Time (Chart Data)
+**Endpoint:** `GET /api/analytics/usage?days=7`
+**Description:** Aggregates the daily number of total conversations and distinct active users over a given timeframe (7 or 30 days).
+**Response Format:**
+```json
+[
+  { "name": "Mon", "conversations": 45, "users": 12 },
+  { "name": "Tue", "conversations": 52, "users": 14 },
+  { "name": "Wed", "conversations": 38, "users": 10 }
+  // ... continue for requested days
+]
+```
+
+## 3. Popular/Trending Queries
+**Endpoint:** `GET /api/analytics/popular-queries`
+**Description:** Analyzes the user chat logs to find the most frequent questions asked to the RAG system. This requires grouping functionally similar semantic queries or just extracting exact match queries.
+**Response Format:**
+```json
+[
+  {
+    "id": 1,
+    "text": "How do I reset my password?",
+    "frequency": 124,
+    "trend": "up"     // Can be "up", "down", or "stable" based on last week's comparison
+  },
+  {
+    "id": 2,
+    "text": "What is the RAG API limit?",
+    "frequency": 85,
+    "trend": "stable"
+  }
+]
+```
+
+## Database / Aggregation Notes
+- **Users Table:** Ensure the backend Database tracks `user_id` when conversations are created so that unique user counts can be properly aggregated.
+- **Timestamp Tracking:** Ensure that `created_at` and `updated_at` are tracked uniformly across the sources (`knowledge` and `urls`) so that the "Recent Additions" section can reliably sort by standard DateTime objects.
