@@ -37,9 +37,9 @@ const AdminSourcesPage = () => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filters]);
 
-  const loadSources = async () => {
+  const loadSources = async (isBackground = false) => {
     try {
-      setLoading(true);
+      if (!isBackground) setLoading(true);
       const [knowledgeData, urlData] = await Promise.all([
         api.getKnowledgeSources(filters),
         api.getDataSources()
@@ -54,14 +54,31 @@ const AdminSourcesPage = () => {
       }));
 
       setSources([...knowledgeSources, ...formattedUrlSources]);
-      setError(null);
+      if (!isBackground) setError(null);
     } catch (err) {
       console.error('Load error:', err);
-      setError(err.message);
+      if (!isBackground) setError(err.message);
     } finally {
-      setLoading(false);
+      if (!isBackground) setLoading(false);
     }
   };
+
+  // Poll exactly every 3 seconds if any source is 'processing'
+  useEffect(() => {
+    const hasProcessing = sources.some(s => s.status === 'processing');
+    let intervalId;
+
+    if (hasProcessing) {
+      intervalId = setInterval(() => {
+        loadSources(true);
+      }, 3000);
+    }
+
+    return () => {
+      if (intervalId) clearInterval(intervalId);
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sources]);
 
   const handleAddText = async (data) => {
     try {

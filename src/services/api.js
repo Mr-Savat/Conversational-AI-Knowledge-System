@@ -179,7 +179,7 @@ class ApiService {
   }
 
   // Add this new method to your ApiService class
-  async sendChatMessageStream(message, conversationId, onChunk, onDone, onError) {
+  async sendChatMessageStream(message, conversationId, onChunk, onDone, onError, signal) {
     const token = await this.getAuthToken();
     const url = `${this.baseURL}/api/chat/stream`;
 
@@ -191,6 +191,7 @@ class ApiService {
           'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify({ message, conversation_id: conversationId }),
+        signal,
       });
 
       const reader = response.body.getReader();
@@ -222,6 +223,11 @@ class ApiService {
         }
       }
     } catch (error) {
+      if (error.name === 'AbortError' || error.message === 'Failed to fetch') {
+        console.log('Stream aborted or disconnected');
+        if (onError) onError('AbortError');
+        return;
+      }
       console.error('Stream error:', error);
       if (onError) onError(error.message);
     }
