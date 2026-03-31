@@ -16,7 +16,6 @@ export default function Auth() {
 
   const { signIn, signUp, resetPassword, signInWithGoogle, isAuthenticated, isAuthLoading, authError, setAuthError } = useAdminStore();
   const navigate = useNavigate();
-
   useEffect(() => {
     if (isAuthenticated && !isAuthLoading) {
       navigate('/admin');

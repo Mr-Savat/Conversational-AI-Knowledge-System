@@ -228,12 +228,13 @@ const ChatSidebar = ({ onSelectConversation, currentConversationId, onNewChat })
               onClick={async () => {
                 setShowUserMenu(false);
                 await signOut();
+                // Force navigation after state is cleared
                 window.location.href = '/auth';
               }}
               className="w-full flex items-center gap-2.5 px-3.5 py-2.5
           text-[13px] text-[#ff3b30] tracking-[-0.01em] cursor-pointer
           hover:bg-black/4 dark:hover:bg-white/6 transition-colors"
-            >
+                  >
               <LogOut size={14} strokeWidth={1.6} /> Sign Out
             </button>
           </div>

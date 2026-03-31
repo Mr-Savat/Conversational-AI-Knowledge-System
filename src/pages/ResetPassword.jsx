@@ -1,19 +1,47 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../services/supabase';
 import { Lock, Eye, EyeOff, ArrowLeft } from 'lucide-react';
 
 const ResetPassword = () => {
   const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
   const navigate = useNavigate();
 
+  useEffect(() => {
+    // Check if we have a session (should have from recovery link)
+    const checkSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        // No session, redirect to auth
+        console.log('No session found, redirecting to auth');
+        navigate('/auth');
+      }
+    };
+    checkSession();
+  }, [navigate]);
+
   const handleResetPassword = async (e) => {
     e.preventDefault();
-    if (!newPassword.trim()) return;
+    
+    if (!newPassword.trim()) {
+      setError('Please enter a new password');
+      return;
+    }
+    
+    if (newPassword !== confirmPassword) {
+      setError('Passwords do not match');
+      return;
+    }
+    
+    if (newPassword.length < 6) {
+      setError('Password must be at least 6 characters');
+      return;
+    }
     
     setLoading(true);
     setError(null);
@@ -26,6 +54,8 @@ const ResetPassword = () => {
       if (error) throw error;
       
       setSuccess(true);
+      // Sign out after password change to force new login
+      await supabase.auth.signOut();
       setTimeout(() => navigate('/auth'), 3000);
       
     } catch (error) {
@@ -91,15 +121,31 @@ const ResetPassword = () => {
               </div>
             </div>
 
+            <div className="space-y-1">
+              <label className="text-[12px] font-medium text-[#8e8e93] ml-1">
+                Confirm Password
+              </label>
+              <div className="relative">
+                <Lock size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-[#8e8e93]" />
+                <input
+                  type="password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  placeholder="••••••••"
+                  className="w-full pl-11 pr-4 py-3.5 bg-white dark:bg-[#1c1c1e] border border-black/8 dark:border-white/8 rounded-xl focus:border-[#0071e3] focus:outline-none focus:ring-1 focus:ring-[#0071e3]/20 transition-all text-[15px]"
+                />
+              </div>
+            </div>
+
             {error && (
-              <div className="bg-red-50 dark:bg-red-950/30 border border-red-200 rounded-xl p-3">
-                <p className="text-[12px] text-red-600 text-center">{error}</p>
+              <div className="bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 rounded-xl p-3">
+                <p className="text-[12px] text-red-600 dark:text-red-400 text-center">{error}</p>
               </div>
             )}
 
             <button
               type="submit"
-              disabled={loading || !newPassword.trim()}
+              disabled={loading}
               className="w-full py-3.5 bg-[#0071e3] hover:bg-[#0077ed] text-white rounded-xl font-medium text-[15px] transition-all active:scale-[0.98] disabled:opacity-50 mt-4"
             >
               {loading ? 'Updating...' : 'Update Password'}

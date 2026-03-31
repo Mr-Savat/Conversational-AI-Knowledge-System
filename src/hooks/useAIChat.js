@@ -37,21 +37,55 @@ const useAIChat = () => {
 
   const handleSend = useCallback(async () => {
     if (!input.trim() || loading) return;
-
+  
     const userMessage = input.trim();
     setInput('');
-
+  
     // Add user message
     setMessages(prev => [...prev, { role: 'user', text: userMessage }]);
-
-    // Add empty AI message that will be updated
+  
+    // ========== FRONTEND GREETING DETECTION ==========
+    // 1. Check for simple greetings
+    const greetings = [
+      'hi', 'hello', 'hey', 'greetings', 
+      'good morning', 'good afternoon', 'good evening', 
+      'what\'s up', 'howdy', 'yo', 'sup'
+    ];
+    
+    const isGreeting = greetings.includes(userMessage.toLowerCase().trim());
+    
+    if (isGreeting) {
+      // Respond immediately without calling backend
+      setMessages(prev => [...prev, { 
+        role: 'ai', 
+        text: "Hello! How can I help you today?" 
+      }]);
+      setLoading(false);
+      return;
+    }
+    
+    // 2. Check for name introduction
+    const nameMatch = userMessage.match(/my name is (\w+)|i am (\w+)|i'm (\w+)/i);
+    if (nameMatch) {
+      const name = (nameMatch[1] || nameMatch[2] || nameMatch[3]);
+      const capitalizedName = name.charAt(0).toUpperCase() + name.slice(1);
+      setMessages(prev => [...prev, { 
+        role: 'ai', 
+        text: `Nice to meet you, ${capitalizedName}! How can I help you today?` 
+      }]);
+      setLoading(false);
+      return;
+    }
+    // ========== END GREETING DETECTION ==========
+  
+    // Normal flow - add empty AI message
     const aiMessageId = Date.now().toString();
     setMessages(prev => [...prev, { id: aiMessageId, role: 'ai', text: '' }]);
     setLoading(true);
-
+  
     let currentConversationId = conversationId;
     let fullResponse = '';
-
+  
     await api.sendChatMessageStream(
       userMessage,
       currentConversationId,

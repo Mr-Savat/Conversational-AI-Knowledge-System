@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  Plus, 
-  Upload, 
-  Link2, 
-  FileText, 
-  Search, 
-  X, 
+import {
+  Plus,
+  Upload,
+  Link2,
+  FileText,
+  Search,
+  X,
   Filter,
   CheckCircle,
   Clock,
@@ -31,6 +31,7 @@ const AdminSourcesPage = () => {
     status: '',
   });
 
+  // In AdminSourcesPage.jsx
   useEffect(() => {
     loadSources();
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -181,9 +182,9 @@ const AdminSourcesPage = () => {
   }
 
   return (
-<div className="h-full overflow-hidden flex flex-col bg-[#fafafc] dark:bg-black">
-  <div className="flex-1 overflow-hidden flex flex-col max-w-7xl mx-auto w-full px-6 py-6">
-        
+    <div className="h-full overflow-hidden flex flex-col bg-[#fafafc] dark:bg-black">
+      <div className="flex-1 overflow-hidden flex flex-col max-w-7xl mx-auto w-full px-6 py-6">
+
         {/* Header - iPhone Style */}
         <div className="mb-8">
           <h1 className="text-2xl font-semibold text-[#1d1d1f] dark:text-white tracking-tight">
@@ -303,12 +304,11 @@ const AdminSourcesPage = () => {
                   <div className="col-span-2">
                     <div className="flex items-center gap-1.5">
                       {getStatusIcon(source.status)}
-                      <span className={`text-[12px] font-medium capitalize ${
-                        source.status === 'active' ? 'text-green-600 dark:text-green-400' :
-                        source.status === 'processing' ? 'text-yellow-600 dark:text-yellow-400' :
-                        source.status === 'error' ? 'text-red-600 dark:text-red-400' :
-                        'text-gray-500'
-                      }`}>
+                      <span className={`text-[12px] font-medium capitalize ${source.status === 'active' ? 'text-green-600 dark:text-green-400' :
+                          source.status === 'processing' ? 'text-yellow-600 dark:text-yellow-400' :
+                            source.status === 'error' ? 'text-red-600 dark:text-red-400' :
+                              'text-gray-500'
+                        }`}>
                         {source.status}
                       </span>
                     </div>
