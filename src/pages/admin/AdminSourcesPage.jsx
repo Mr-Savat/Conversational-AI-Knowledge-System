@@ -34,7 +34,7 @@ const AdminSourcesPage = () => {
   // In AdminSourcesPage.jsx
   useEffect(() => {
     loadSources();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filters]);
 
   const loadSources = async (isBackground = false) => {
@@ -77,7 +77,7 @@ const AdminSourcesPage = () => {
     return () => {
       if (intervalId) clearInterval(intervalId);
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sources]);
 
   const handleAddText = async (data) => {
@@ -288,18 +288,20 @@ const AdminSourcesPage = () => {
           </div>
         ) : (
           <div className="bg-white dark:bg-[#1c1c1e] rounded-2xl border border-black/6 dark:border-white/6 overflow-hidden">
-            {/* Table Header */}
-            <div className="grid grid-cols-12 gap-4 px-5 py-3 border-b border-black/6 dark:border-white/6 text-[11px] font-medium text-[#8e8e93] uppercase tracking-wide">
-              <div className="col-span-4">Name</div>
-              <div className="col-span-2">Type</div>
-              <div className="col-span-2">Status</div>
-              <div className="col-span-2">Chunks</div>
-              <div className="col-span-1">Updated</div>
-              <div className="col-span-1 text-right">Actions</div>
-            </div>
+            <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-black/10 dark:scrollbar-thumb-white/10">
+              <div className="min-w-[800px]">
+                {/* Table Header */}
+                <div className="grid grid-cols-12 gap-4 px-5 py-3 border-b border-black/6 dark:border-white/6 text-[11px] font-medium text-[#8e8e93] uppercase tracking-wide">
+                  <div className="col-span-4">Name</div>
+                  <div className="col-span-2">Type</div>
+                  <div className="col-span-2">Status</div>
+                  <div className="col-span-2">Chunks</div>
+                  <div className="col-span-1">Updated</div>
+                  <div className="col-span-1 text-right">Actions</div>
+                </div>
 
-            {/* Table Rows */}
-            <div className="divide-y divide-black/5 dark:divide-white/5">
+                {/* Table Rows */}
+                <div className="divide-y divide-black/5 dark:divide-white/5">
               {sources.map((source) => (
                 <div key={source.id} className="grid grid-cols-12 gap-4 px-5 py-3 items-center hover:bg-[#f5f5f7] dark:hover:bg-[#2c2c2e] transition-colors group">
                   {/* Name */}
@@ -322,9 +324,9 @@ const AdminSourcesPage = () => {
                     <div className="flex items-center gap-1.5">
                       {getStatusIcon(source.status)}
                       <span className={`text-[12px] font-medium capitalize ${source.status === 'active' ? 'text-green-600 dark:text-green-400' :
-                          source.status === 'processing' ? 'text-yellow-600 dark:text-yellow-400' :
-                            source.status === 'error' ? 'text-red-600 dark:text-red-400' :
-                              'text-gray-500'
+                        source.status === 'processing' ? 'text-yellow-600 dark:text-yellow-400' :
+                          source.status === 'error' ? 'text-red-600 dark:text-red-400' :
+                            'text-gray-500'
                         }`}>
                         {source.status}
                       </span>
@@ -367,7 +369,9 @@ const AdminSourcesPage = () => {
                 </div>
               ))}
             </div>
+            </div>
           </div>
+        </div>
         )}
 
         {/* Modal */}

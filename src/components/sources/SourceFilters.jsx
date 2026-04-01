@@ -92,6 +92,7 @@ const SourceFilters = ({ filters, onFilterChange }) => {
           : state.isFocused ? 'rgba(255,255,255,0.1)' : 'transparent',
       }
     }),
+    menuPortal: base => ({ ...base, zIndex: 9999 })
   };
 
   return (
@@ -121,6 +122,7 @@ const SourceFilters = ({ filters, onFilterChange }) => {
           onChange={(selected) => handleChange('type', selected?.value || '')}
           styles={customStyles}
           isSearchable={false}
+          menuPortalTarget={document.body}
           className="react-select-container"
           classNamePrefix="react-select"
           components={{ DropdownIndicator: () => <ChevronDown size={14} className="mr-2 text-[#8e8e93]" /> }}
@@ -135,6 +137,7 @@ const SourceFilters = ({ filters, onFilterChange }) => {
           onChange={(selected) => handleChange('status', selected?.value || '')}
           styles={customStyles}
           isSearchable={false}
+          menuPortalTarget={document.body}
           components={{ DropdownIndicator: () => <ChevronDown size={14} className="mr-2 text-[#8e8e93]" /> }}
         />
       </div>

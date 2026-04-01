@@ -1,16 +1,16 @@
 import React from 'react';
-import { Moon, Sun, LayoutDashboard, Brain } from 'lucide-react';
+import { Moon, Sun, LayoutDashboard, Brain, Menu } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 import { useNavigate } from 'react-router-dom';
 
-const Navbar = ({ title = 'AI Knowledge' }) => {
+const Navbar = ({ title = 'AI Knowledge', onMenuClick }) => {
   const { isDark, setIsDark } = useTheme();
   const navigate = useNavigate();
 
   return (
     <nav className="
       sticky top-0 z-50 flex justify-between items-center
-      px-6 h-13
+      px-4 md:px-6 h-13
       bg-white/70 dark:bg-[#161617]/80
       backdrop-blur-xl backdrop-saturate-180
       border-b border-black/8 dark:border-white/8
@@ -18,6 +18,14 @@ const Navbar = ({ title = 'AI Knowledge' }) => {
     ">
       {/* Brand */}
       <div className="flex items-center gap-2">
+        {onMenuClick && (
+          <button
+            onClick={onMenuClick}
+            className="md:hidden p-1.5 -ml-1.5 mr-1 rounded-lg text-[#1d1d1f] dark:text-[#f5f5f7] hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
+          >
+            <Menu size={20} strokeWidth={2} />
+          </button>
+        )}
         <span className="text-[17px] font-semibold tracking-[-0.022em] text-[#1d1d1f] dark:text-[#f5f5f7]">
           {title}
         </span>

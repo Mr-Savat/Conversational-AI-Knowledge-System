@@ -20,6 +20,7 @@ const ChatPage = () => {
     handleSuggestion 
   } = useAIChat();
   
+  const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
   const messagesEndRef = useRef(null);
 
   // Determine navbar title
@@ -62,13 +63,24 @@ const ChatPage = () => {
   return (
     <div className="flex h-screen overflow-hidden bg-[#fafafc] dark:bg-black text-[#1d1d1f] dark:text-[#f5f5f7]">
       <ChatSidebar 
-        onSelectConversation={loadConversation}
+        onSelectConversation={(id, title) => {
+          loadConversation(id, title);
+          setIsSidebarOpen(false); // Close sidebar on mobile after selection
+        }}
         currentConversationId={conversationId}
-        onNewChat={startNewChat}
+        onNewChat={() => {
+          startNewChat();
+          setIsSidebarOpen(false);
+        }}
+        isOpen={isSidebarOpen}
+        onClose={() => setIsSidebarOpen(false)}
       />
       
       <main className="flex-1 flex flex-col min-w-0 relative">
-        <Navbar title={getNavbarTitle()} />
+        <Navbar 
+          title={getNavbarTitle()} 
+          onMenuClick={() => setIsSidebarOpen(true)}
+        />
         
         {/* Message Thread */}
         <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-black/10 dark:scrollbar-thumb-white/10">
@@ -85,7 +97,7 @@ const ChatPage = () => {
         </div>
 
         {/* Input Dock */}
-        <div className="p-4 pb-6">
+        <div className="p-4 pb-4 md:pb-6">
           <div className="max-w-3xl mx-auto">
             <ChatInput
               value={input}

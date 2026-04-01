@@ -7,7 +7,7 @@ import {
 import api from '../../services/api';
 import { useAdminStore } from '../../store/adminStore';
 
-const ChatSidebar = ({ onSelectConversation, currentConversationId, onNewChat }) => {
+const ChatSidebar = ({ onSelectConversation, currentConversationId, onNewChat, isOpen, onClose }) => {
   const [conversations, setConversations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [deletingId, setDeletingId] = useState(null);
@@ -67,9 +67,8 @@ const ChatSidebar = ({ onSelectConversation, currentConversationId, onNewChat })
 
   const conversationGroups = groupConversations();
 
-  if (!expanded) {
-    return (
-      <div className="flex flex-col items-center h-full w-14 shrink-0 py-3 gap-2 border-r border-black/[0.07] dark:border-white/[0.07] bg-[#fafafc]/95 dark:bg-[#1c1c1e]/95 backdrop-blur-xl">
+  const renderCollapsed = () => (
+    <div className="flex flex-col items-center h-full w-14 shrink-0 py-3 gap-2 border-r border-black/[0.07] dark:border-white/[0.07] bg-[#fafafc]/95 dark:bg-[#1c1c1e]/95 backdrop-blur-xl">
 
         {/* Logo/Icon at top */}
         <div className="w-7 h-7 rounded-[7px] bg-[#0071e3] flex items-center justify-center shrink-0">
@@ -104,15 +103,13 @@ const ChatSidebar = ({ onSelectConversation, currentConversationId, onNewChat })
           </div>
         </div>
       </div>
-    );
-  }
+  );
 
-  // EXPANDED VIEW 
-  return (
-    <div className="flex flex-col h-full w-65 shrink-0
+  const renderExpanded = () => (
+    <div className="flex flex-col h-full w-72 md:w-65 shrink-0
       border-r border-black/[0.07] dark:border-white/[0.07]
-      bg-[#fafafc]/95 dark:bg-[#1c1c1e]/95
-      backdrop-blur-xl overflow-hidden">
+      bg-[#fafafc] dark:bg-[#1c1c1e]
+      overflow-hidden">
 
       {/* Header */}
       <div className="px-3 pt-4 pb-3 border-b border-black/[0.07] dark:border-white/[0.07] shrink-0">
@@ -267,6 +264,27 @@ const ChatSidebar = ({ onSelectConversation, currentConversationId, onNewChat })
         </button>
       </div>
     </div>
+  );
+
+  return (
+    <>
+      {/* Mobile Backdrop */}
+      {isOpen && (
+        <div 
+          className="md:hidden fixed inset-0 bg-black/20 dark:bg-black/40 z-40 backdrop-blur-sm transition-opacity"
+          onClick={onClose}
+        />
+      )}
+
+      {/* Sidebar Container */}
+      <div className={`
+        fixed inset-y-0 left-0 z-50 transform transition-transform duration-300 ease-in-out
+        md:relative md:translate-x-0
+        ${isOpen ? 'translate-x-0' : '-translate-x-full'}
+      `}>
+        {expanded ? renderExpanded() : renderCollapsed()}
+      </div>
+    </>
   );
 };
 
