@@ -1,0 +1,66 @@
+System Settings Backend Requirements (Settings API APIs)
+
+===========================================
+DATABASE DESIGN (Suggested)
+===========================================
+We need a `system_settings` table in Supabase or your SQL database to hold these variables globally.
+
+Table `system_settings`:
+- id (uuid, primary key)
+- category (string) - e.g., 'ai', 'retrieval', 'access', 'branding'
+- key (string) - e.g., 'model_name', 'system_prompt', 'max_tokens'
+- value (text / jsonb) - the stored value
+- updated_at (timestamp)
+
+===========================================
+REQUIRED ENDPOINTS
+===========================================
+
+1. GET /api/settings
+- Description: Retrieves all active system configuration settings to populate the frontend visually.
+- Requires: Admin Auth Token.
+- Expected Response Format:
+{
+  "ai": {
+    "model": "gemini-1.5-pro",
+    "systemPrompt": "You are a highly capable AI assistant...",
+    "temperature": 0.3,
+    "maxTokens": 2048
+  },
+  "retrieval": {
+    "topK": 5,
+    "minSimilarity": 0.75,
+    "chunkSize": 1000,
+    "chunkOverlap": 200
+  },
+  "access": {
+    "allowedDomains": "@company.com"
+  },
+  "branding": {
+    "companyName": "Internal Knowledge AI",
+    "brandColor": "#0071e3"
+  }
+}
+
+2. PUT /api/settings
+- Description: Updates the system configuration when the Admin clicks "Save Changes".
+- Requires: Admin Auth Token.
+- Expected Request Body:
+{
+  "settings": { ... full object ... }
+}
+- Expected Response: 200 OK {"success": true}
+
+===========================================
+DANGER ZONE Action Endpoints
+===========================================
+
+3. DELETE /api/maintenance/purge-conversations
+- Description: Permanently deletes all chat logs/conversations from the database to save space.
+- Action: Truncate/Delete all rows in 'messages' and 'conversations' logic.
+- Requires: Admin Auth Token.
+
+4. POST /api/maintenance/reindex-vectors
+- Description: Flushes the Vector DB and forces the Python backend to aggressively re-parse, re-chunk, and re-embed all active Source contents according to the new chunkSize and chunkOverlap settings.
+- Action: Starts a background task (FastAPI BackgroundTasks or Celery), returning {"status": "processing"}.
+- Requires: Admin Auth Token.
