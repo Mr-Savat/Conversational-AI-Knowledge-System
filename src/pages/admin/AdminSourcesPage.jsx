@@ -53,7 +53,25 @@ const AdminSourcesPage = () => {
         type: source.type || 'url',
       }));
 
-      setSources([...knowledgeSources, ...formattedUrlSources]);
+      let combined = [...knowledgeSources, ...formattedUrlSources];
+
+      if (filters.type) {
+        combined = combined.filter(s => s.type === filters.type);
+      }
+      
+      if (filters.status) {
+        combined = combined.filter(s => s.status === filters.status);
+      }
+
+      if (filters.search) {
+        const query = filters.search.toLowerCase();
+        combined = combined.filter(s => 
+          (s.title || '').toLowerCase().includes(query) || 
+          (s.url || '').toLowerCase().includes(query)
+        );
+      }
+
+      setSources(combined);
       if (!isBackground) setError(null);
     } catch (err) {
       console.error('Load error:', err);
@@ -199,8 +217,7 @@ const AdminSourcesPage = () => {
   }
 
   return (
-    <div className="h-full overflow-hidden flex flex-col bg-[#fafafc] dark:bg-black">
-      <div className="flex-1 overflow-hidden flex flex-col max-w-7xl mx-auto w-full px-6 py-6">
+    <div className="flex flex-col">
 
         {/* Header - iPhone Style */}
         <div className="mb-8">
@@ -295,8 +312,8 @@ const AdminSourcesPage = () => {
                   <div className="col-span-4">Name</div>
                   <div className="col-span-2">Type</div>
                   <div className="col-span-2">Status</div>
-                  <div className="col-span-2">Chunks</div>
-                  <div className="col-span-1">Updated</div>
+                  <div className="col-span-1">Chunks</div>
+                  <div className="col-span-2">Updated</div>
                   <div className="col-span-1 text-right">Actions</div>
                 </div>
 
@@ -334,14 +351,14 @@ const AdminSourcesPage = () => {
                   </div>
 
                   {/* Chunks */}
-                  <div className="col-span-2">
+                  <div className="col-span-1">
                     <span className="text-[13px] text-[#1d1d1f] dark:text-white font-mono">
                       {source.document_count || 0}
                     </span>
                   </div>
 
                   {/* Updated */}
-                  <div className="col-span-1">
+                  <div className="col-span-2">
                     <span className="text-[11px] text-[#8e8e93]">
                       {formatDate(source.updated_at)}
                     </span>
@@ -407,7 +424,6 @@ const AdminSourcesPage = () => {
             </div>
           </div>
         )}
-      </div>
 
       <style>{`
         @keyframes fade-in {
