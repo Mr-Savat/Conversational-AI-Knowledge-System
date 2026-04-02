@@ -20,7 +20,12 @@ const useAIChat = () => {
     };
   }, []);
 
-  const loadConversation = useCallback(async (id) => {
+  const loadConversation = useCallback(async (id, title) => {
+    // OPTIMISTIC UI: Instantly update the active conversation state so the Sidebar reacts instantly
+    setConversationId(id);
+    if (title) setConversationTitle(title);
+    setMessages([]); // Clear old messages while loading
+
     try {
       setLoading(true);
       const data = await api.getConversation(id);

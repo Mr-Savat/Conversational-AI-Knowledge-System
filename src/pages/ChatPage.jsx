@@ -86,7 +86,12 @@ const ChatPage = () => {
         {/* Message Thread */}
         <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-black/10 dark:scrollbar-thumb-white/10">
           <div className="max-w-3xl mx-auto w-full px-4 py-6">
-            {messages.length === 0 ? (
+            {messages.length === 0 && loading ? (
+              <div className="flex flex-col items-center justify-center h-full pt-20">
+                <div className="w-8 h-8 border-2 border-[#0071e3] border-t-transparent rounded-full animate-spin mb-4" />
+                <p className="text-[#8e8e93] text-[13px]">Loading conversation...</p>
+              </div>
+            ) : messages.length === 0 ? (
               <WelcomeScreen onSelectSuggestion={handleSuggestion} />
             ) : (
               <div className="space-y-5">
