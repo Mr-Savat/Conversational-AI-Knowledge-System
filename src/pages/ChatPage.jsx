@@ -68,6 +68,7 @@ const ChatPage = () => {
           setIsSidebarOpen(false); // Close sidebar on mobile after selection
         }}
         currentConversationId={conversationId}
+        currentMessageCount={messages?.length || 0}
         onNewChat={() => {
           startNewChat();
           setIsSidebarOpen(false);

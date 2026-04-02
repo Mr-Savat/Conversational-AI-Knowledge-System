@@ -104,6 +104,23 @@ const useAIChat = () => {
     setLoading(true);
   
     let currentConversationId = conversationId;
+    
+    // FIX: If this is a brand new conversation, create it in the backend FIRST
+    // so we can capture the actual conversationId and use it for subsequent messages.
+    if (!currentConversationId) {
+      try {
+        const convData = await api.request('/api/conversations', {
+          method: 'POST',
+          body: JSON.stringify({ title: userMessage.slice(0, 50) })
+        });
+        currentConversationId = convData.id;
+        setConversationId(currentConversationId);
+        setConversationTitle(convData.title);
+      } catch (err) {
+        console.error("Failed to pre-create conversation:", err);
+      }
+    }
+
     let fullResponse = '';
   
     await api.sendChatMessageStream(

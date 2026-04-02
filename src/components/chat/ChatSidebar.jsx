@@ -7,7 +7,7 @@ import {
 import api from '../../services/api';
 import { useAdminStore } from '../../store/adminStore';
 
-const ChatSidebar = ({ onSelectConversation, currentConversationId, onNewChat, isOpen, onClose }) => {
+const ChatSidebar = ({ onSelectConversation, currentConversationId, currentMessageCount, onNewChat, isOpen, onClose }) => {
   const [conversations, setConversations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [deletingId, setDeletingId] = useState(null);
@@ -19,15 +19,24 @@ const ChatSidebar = ({ onSelectConversation, currentConversationId, onNewChat, i
 
   useEffect(() => { loadConversations(); }, []);
 
-  const loadConversations = async () => {
+  // Refresh sidebar if a new conversation is created from the chat panel
+  useEffect(() => {
+    if (currentConversationId && !loading && conversations.length > 0) {
+      if (!conversations.some(c => c.id === currentConversationId)) {
+        loadConversations(true); // Silent refresh
+      }
+    }
+  }, [currentConversationId, loading, conversations]);
+
+  const loadConversations = async (silent = false) => {
     try {
-      setLoading(true);
+      if (!silent) setLoading(true);
       const data = await api.getConversations();
       setConversations(data.conversations || []);
     } catch (error) {
       console.error('Failed to load conversations:', error);
     } finally {
-      setLoading(false);
+      if (!silent) setLoading(false);
     }
   };
 
@@ -186,6 +195,7 @@ const ChatSidebar = ({ onSelectConversation, currentConversationId, onNewChat, i
                     key={conv.id}
                     conv={conv}
                     isActive={currentConversationId === conv.id}
+                    currentMessageCount={currentMessageCount}
                     onSelect={onSelectConversation}
                     onDelete={handleDelete}
                     isDeleting={deletingId === conv.id}
@@ -288,7 +298,7 @@ const ChatSidebar = ({ onSelectConversation, currentConversationId, onNewChat, i
   );
 };
 
-const ConversationItem = ({ conv, isActive, onSelect, onDelete, isDeleting }) => (
+const ConversationItem = ({ conv, isActive, currentMessageCount, onSelect, onDelete, isDeleting }) => (
   <div
     onClick={() => onSelect(conv.id, conv.title)}
     className={`group flex items-center gap-2.5 px-2.5 py-1.75 mx-1.5 mb-px
@@ -309,7 +319,9 @@ const ConversationItem = ({ conv, isActive, onSelect, onDelete, isDeleting }) =>
         }`}>
         {conv.title || 'New Conversation'}
       </p>
-      <p className="text-[11px] text-[#8e8e93] mt-px">{conv.message_count || 0} messages</p>
+      <p className="text-[11px] text-[#8e8e93] mt-px">
+        {isActive && currentMessageCount !== undefined ? currentMessageCount : (conv.message_count || 0)} messages
+      </p>
     </div>
     <button
       onClick={e => onDelete(e, conv.id)}
