@@ -178,6 +178,10 @@ class ApiService {
     });
   }
 
+  async getDashboardAnalytics() {
+    return this.request('/api/analytics/dashboard');
+  }
+
   // Add this new method to your ApiService class
   async sendChatMessageStream(message, conversationId, onChunk, onDone, onError, signal) {
     const token = await this.getAuthToken();

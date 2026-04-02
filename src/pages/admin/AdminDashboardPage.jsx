@@ -16,59 +16,32 @@ const AdminDashboardPage = () => {
   const [recentSources, setRecentSources] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // MOCK DATA for Chart & Popular Questions
-  const generateMockChartData = () => {
-    const data = [];
-    const today = new Date();
-    for (let i = 6; i >= 0; i--) {
-      const d = new Date(today);
-      d.setDate(today.getDate() - i);
-      data.push({
-        name: d.toLocaleDateString('en-US', { weekday: 'short' }),
-        conversations: Math.floor(Math.random() * 50) + 10,
-        users: Math.floor(Math.random() * 30) + 5
-      });
-    }
-    return data;
-  };
-
-  const chartData = generateMockChartData();
-
-  const popularQuestions = [
-    { id: 1, text: "How do I reset my account password?", frequency: 124, trend: 'up' },
-    { id: 2, text: "What are the core features of the RAG system?", frequency: 98, trend: 'stable' },
-    { id: 3, text: "Where can I find the API documentation?", frequency: 85, trend: 'up' },
-    { id: 4, text: "How to export conversational history?", frequency: 54, trend: 'stable' },
-    { id: 5, text: "Can I delete a specific document from a source?", frequency: 42, trend: 'down' },
-  ];
+  const [chartData, setChartData] = useState([]);
+  const [popularQuestions, setPopularQuestions] = useState([]);
 
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
         setLoading(true);
-        const [knowledgeData, dataSourcesData, conversationsData] = await Promise.all([
-          api.getKnowledgeSources(),
-          api.getDataSources(),
-          api.getConversations().catch(() => []) 
+        const [dashboardAnalytics, knowledgeData, dataSourcesData] = await Promise.all([
+          api.getDashboardAnalytics().catch(err => {
+            console.error("Failed to load dashboard analytics:", err);
+            return null;
+          }),
+          api.getKnowledgeSources().catch(() => ({sources: []})),
+          api.getDataSources().catch(() => ({sources: []}))
         ]);
+
+        if (dashboardAnalytics) {
+          setStats(dashboardAnalytics.stats);
+          setChartData(dashboardAnalytics.chartData);
+          setPopularQuestions(dashboardAnalytics.popularQueries);
+        }
 
         const knowledgeSources = knowledgeData?.sources || [];
         const dataSources = dataSourcesData?.sources || [];
-        const conversations = Array.isArray(conversationsData) ? conversationsData : (conversationsData?.conversations || []);
-
         const allSources = [...knowledgeSources, ...dataSources];
         
-        // Mocking user stats temporarily until implemented in backend
-        const mockTotalUsers = conversations.length > 0 ? (conversations.length * 1.5).toFixed(0) : 42;
-        const mockActiveUsers = conversations.length > 0 ? (conversations.length * 0.8).toFixed(0) : 15;
-
-        setStats({
-          totalSources: allSources.length,
-          totalConversations: conversations.length,
-          totalUsers: mockTotalUsers,
-          activeUsers: mockActiveUsers,
-        });
-
         const sorted = allSources.sort((a, b) => new Date(b.updated_at || b.created_at || 0) - new Date(a.updated_at || a.created_at || 0));
         setRecentSources(sorted.slice(0, 4));
 
